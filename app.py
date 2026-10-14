@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 
 # Konfigurasi Halaman Web
@@ -8,20 +7,40 @@ st.set_page_config(
     layout="wide"
 )
 
-DATABASE_DIR = "."
+# Konten Materi Teks LHO
+materi_lho = """
+### TEKS LAPORAN HASIL OBSERVASI (LHO) - KELAS X
 
-# Fungsi membaca isi file teks dari folder database
-def read_database_file(filename):
-    filepath = os.path.join(DATABASE_DIR, filename)
-    if os.path.exists(filepath):
-        with open(filepath, "r", encoding="utf-8") as f:
-            return f.read().strip()
-    return ""
+**1. Pengertian:**
+Teks Laporan Hasil Observasi (LHO) adalah teks yang memberikan informasi secara umum tentang sesuatu berdasarkan fakta dari hasil pengamatan secara langsung di lapangan.
 
-# Membaca konten dari file sesuai nama file di VS Code Anda
-materi_lho = read_database_file("MATERI LAPORAN HASIL OBSERVASI.txt")
-lkpd_content = read_database_file("LKPD (LEMBAR KERJA PESERTA DIDIK).txt")
-link_kahoot = read_database_file("LINK KUIS KAHOOT.txt")
+**2. Ciri-ciri Teks LHO:**
+- Ditulis berdasarkan fakta lapangan hasil pengamatan nyata.
+- Bersifat objektif, global, dan universal.
+- Objek yang dibahas adalah objek tunggal.
+- Tidak mengandung prasangka atau dugaan yang menyimpang.
+
+**3. Struktur Utama Teks LHO:**
+- **Pernyataan Umum / Klasifikasi:** Berisi pembuka, definisi umum, atau pengantar tentang objek yang dilaporkan.
+- **Deskripsi Bagian:** Berisi rincian detail mengenai bagian-bagian objek yang diamati.
+- **Deskripsi Manfaat / Kesimpulan:** Berisi kegunaan atau manfaat objek tersebut dalam kehidupan sehari-hari.
+
+**4. Kaidah Kebahasaan Teks LHO:**
+- Menggunakan kata kerja material dan relasional.
+- Menggunakan kata benda (nomina) dan frasa nomina.
+- Menggunakan istilah teknis atau ilmiah sesuai bidang ilmu objek.
+- Menggunakan kalimat definisi (menggunakan kata 'adalah', 'merupakan') dan kalimat deskripsi.
+"""
+
+# Konten LKPD
+lkpd_content = """
+**Tugas Analisis Mandiri Teks LHO:**
+1. Carilah sebuah contoh Teks Laporan Hasil Observasi di internet atau buku paket!
+2. Analisislah teks tersebut berdasarkan strukturnya (Pernyataan Umum, Deskripsi Bagian, dan Deskripsi Manfaat)!
+3. Tuliskan hasil analisis Anda pada kolom jawaban di bawah ini.
+"""
+
+link_kahoot = "https://kahoot.it/"
 
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("📚 AI Tutor Bahasa Indonesia")
@@ -45,10 +64,7 @@ st.sidebar.info("Aplikasi AI Tutor khusus materi Teks Laporan Hasil Observasi (L
 if menu == "📖 Materi Teks LHO":
     st.title("📖 Modul Materi: Teks Laporan Hasil Observasi (LHO)")
     st.markdown("---")
-    if materi_lho:
-        st.markdown(materi_lho)
-    else:
-        st.warning("File `MATERI LAPORAN HASIL OBSERVASI.txt` belum berisi teks materi. Silakan isi file tersebut terlebih dahulu.")
+    st.markdown(materi_lho)
 
 # --- MENU 2: AI TUTOR (TANYA JAWAB) ---
 elif menu == "💬 AI Tutor (Tanya Jawab)":
@@ -60,13 +76,10 @@ elif menu == "💬 AI Tutor (Tanya Jawab)":
     if st.button("🔍 TANYAKAN", type="primary"):
         if not query.strip():
             st.warning("Silakan ketik pertanyaan terlebih dahulu.")
-        elif not materi_lho:
-            st.error("Materi di database belum tersedia.")
         else:
             words = [w.lower() for w in query.split() if len(w) > 2]
             content_lower = materi_lho.lower()
             
-            # Cek kecocokan kata kunci sederhanan
             matches = sum(1 for word in words if word in content_lower)
             
             if matches > 0:
@@ -74,17 +87,13 @@ elif menu == "💬 AI Tutor (Tanya Jawab)":
                 st.markdown("### 💡 Penjelasan AI Tutor:")
                 st.info(materi_lho)
             else:
-                st.error("Maaf, pertanyaan Anda belum tercakup dalam database materi. Coba gunakan kata kunci seperti 'struktur', 'ciri', atau 'kebahasaan'.")
+                st.error("Maaf, pertanyaan Anda belum tercakup dalam database materi.")
 
 # --- MENU 3: LKPD INTERAKTIF ---
 elif menu == "📝 LKPD Interaktif":
     st.title("📝 Lembar Kerja Peserta Didik (LKPD)")
-    
-    if lkpd_content:
-        st.markdown("### 📌 Petunjuk & Soal LKPD:")
-        st.info(lkpd_content)
-    else:
-        st.write("Silakan selesaikan tugas analisis Teks LHO mandiri di bawah ini:")
+    st.markdown("### 📌 Petunjuk & Soal LKPD:")
+    st.info(lkpd_content)
 
     st.markdown("---")
     col1, col2 = st.columns(2)
@@ -108,24 +117,14 @@ elif menu == "🎯 Kuis Kahoot":
     st.write("Uji pemahaman Anda dengan mengikuti Kuis Kahoot yang telah disiapkan!")
     st.markdown("---")
     
-    if link_kahoot:
-        st.success("Tautan Kuis Kahoot sudah siap!")
-        st.markdown(f"👉 **Klik tombol atau link di bawah ini untuk memulai kuis:**")
-        st.link_button("🚀 Buka Kuis Kahoot", link_kahoot)
-        st.markdown(f"**Link langsung:** [{link_kahoot}]({link_kahoot})")
-    else:
-        st.warning("File `LINK KUIS KAHOOT.txt` masih kosong. Silakan buka file tersebut di VS Code dan tempelkan URL link Kahoot Anda di dalamnya!")
+    st.success("Tautan Kuis Kahoot sudah siap!")
+    st.markdown("👉 **Klik tombol atau link di bawah ini untuk memulai kuis:**")
+    st.link_button("🚀 Buka Kuis Kahoot", link_kahoot)
+    st.markdown(f"**Link langsung:** [{link_kahoot}]({link_kahoot})")
 
 # --- MENU 5: PANDUAN PENGGUNAAN ---
 elif menu == "💡 Panduan Penggunaan":
     st.title("💡 Panduan Penggunaan AI Tutor Teks LHO")
     st.markdown("""
     Aplikasi ini dirancang sebagai media pembelajaran interaktif khusus untuk materi **Teks Laporan Hasil Observasi (LHO)** Bahasa Indonesia Kelas X.
-    
-    #### **Fitur Utama Aplikasi:**
-    1. **📖 Materi Teks LHO**: Membaca ringkasan materi terlengkap.
-    2. **💬 AI Tutor**: Tempat bertanya hal-hal seputar Teks LHO.
-    3. **📝 LKPD Interaktif**: Petunjuk dan tempat pengerjaan tugas lembar kerja siswa.
-    4. **🎯 Kuis Kahoot**: Tautan langsung menuju Kuis Kahoot interaktif.
-    5. **💡 Panduan Penggunaan**: Petunjuk penggunaan aplikasi.
     """)
